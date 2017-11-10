@@ -20,70 +20,80 @@ namespace ImageDuJour2
     
     public partial class Form1 : Form
     {
-        private static bool useProxy;
-        private static userProxy userproxy;
-        public struct BingImageInfos
+        private static bool _useProxy;
+        private static UserProxy _userproxy;
+
+        private struct BingImageInfos
         {
-            public string url;      // url
-            public string desc;     // copyright
+            public string Url;      // url
+            public string Desc;     // copyright
         };
-        public struct userProxy
+
+        private struct UserProxy
         {
-            public string url;
-            public string port;
-            public string login;
-            public string password;
+            public string Url;
+            public string Port;
+            public string Login;
+            public string Password;
         }
         public Form1()
         {
             InitializeComponent();
-            userproxy = new userProxy();
+            _userproxy = new UserProxy();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            BingImageInfos bii = GetPicture(DateTime.Now);
-            if(bii.url == "")
+            var bii = GetPicture(DateTime.Now);
+            const string bingRoot = "https://www.bing.com";
+            if(bii.Url == "")
             {
                 Console.WriteLine("Erreur !");
             }
             else
             {
                 // On charge l'image dans le controle image
-                String bing_root = "https://www.bing.com";
-                String full_url = bing_root + bii.url;
+                var fullUrl = bingRoot + bii.Url;
 
-                var request = WebRequest.Create(full_url);
+                var request = WebRequest.Create(fullUrl);
 
                 using (var response = request.GetResponse())
                 using (var stream = response.GetResponseStream())
                 {
-                    pict_bing_today.Image = Bitmap.FromStream(stream);
+                    try
+                    {
+                        pict_bing_today.Image = Bitmap.FromStream(stream);
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine(exception);
+                        throw;
+                    }                
                 }
-                lab_bing_desc.Text = bii.desc;
+                lab_bing_desc.Text = bii.Desc;
             }
         }
 
-        static public String getCurrentLocal()
+        private static string GetCurrentLocal()
         {
-            CultureInfo ci = System.Globalization.CultureInfo.CurrentCulture;
+            var ci = System.Globalization.CultureInfo.CurrentCulture;
             return ci.Name;
         }
 
-        static public BingImageInfos GetPicture(DateTime dateTime)
+        private static BingImageInfos GetPicture(DateTime dateTime)
         {
-            String bing_root_url = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=";
-            String bing_local_url = getCurrentLocal();
-            String bing_url = bing_root_url + bing_local_url;
-            string data_string = "";
+            const string bingRootUrl = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=";
+            var bingLocalUrl = GetCurrentLocal();
+            var bingUrl = bingRootUrl + bingLocalUrl;
+            var dataString = "";
             WebClient client = null;
-            BingImageInfos bii = new BingImageInfos();
-            if (useProxy == true)
+            var bii = new BingImageInfos();
+            if (_useProxy == true)
             {
                 Console.WriteLine("Using proxy");
-                WebProxy p = new WebProxy(userproxy.url + ":" + userproxy.port, true)
+                var p = new WebProxy(_userproxy.Url + ":" + _userproxy.Port, true)
                 {
-                    Credentials = new NetworkCredential(userproxy.login, userproxy.password)
+                    Credentials = new NetworkCredential(_userproxy.Login, _userproxy.Password)
                 };
                 WebRequest.DefaultWebProxy = p;
                 client = new WebClient
@@ -102,27 +112,27 @@ namespace ImageDuJour2
             try
             {
                 // Récupére les informations de l'image du jour
-                data_string = client.DownloadString(bing_url);
+                dataString = client.DownloadString(bingUrl);
             }
             catch(Exception e)
             {
                 Console.WriteLine(e.Message);
-                bii.url = "";
+                bii.Url = "";
                 return bii;
             }
 
-            Console.WriteLine(data_string);
+            Console.WriteLine(dataString);
 
-            dynamic json = Newtonsoft.Json.Linq.JObject.Parse(data_string);
+            dynamic json = Newtonsoft.Json.Linq.JObject.Parse(dataString);
             
-            bii.url = json.images[0].url;
-            bii.desc = json.images[0].copyright;
+            bii.Url = json.images[0].url;
+            bii.Desc = json.images[0].copyright;
             return bii;
         }
 
         private void chk_proxy_CheckedChanged(object sender, EventArgs e)
         {
-            useProxy = this.chk_proxy.Checked;
+            _useProxy = this.chk_proxy.Checked;
         }
 
         private void bt_quit_Click(object sender, EventArgs e)
