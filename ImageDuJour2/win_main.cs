@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 namespace ImageDuJour2
 {
     
-    public partial class Form1 : Form
+    public partial class win_main : Form
     {
         private static bool _useProxy;
         private static UserProxy _userproxy;
@@ -36,7 +36,7 @@ namespace ImageDuJour2
             public string Login;
             public string Password;
         }
-        public Form1()
+        public win_main()
         {
             InitializeComponent();
             _userproxy = new UserProxy();
@@ -138,6 +138,13 @@ namespace ImageDuJour2
         private void bt_quit_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void bt_proxy_setup_Click(object sender, EventArgs e)
+        {
+            // Ouvre la fenêtre de configuration du proxy
+            Form prox_conf = new win_config();
+            prox_conf.Show();
         }
     }
 }
