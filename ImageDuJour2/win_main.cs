@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -12,43 +14,118 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
-//using System.Web.Script.Serialization;
-//using System.Web.UI.WebControls;
+using IniParser;
+using IniParser.Model;
+
 
 namespace ImageDuJour2
 {
     
-    public partial class win_main : Form
+    public partial class WinMain : Form
     {
         private static bool _useProxy;
-        private static UserProxy _userproxy;
-
+        public static UserProxy _userproxy;
+        private FileIniDataParser IniFile;
+        public static IniData iniData;
         private struct BingImageInfos
         {
             public string Url;      // url
             public string Desc;     // copyright
         };
 
-        private struct UserProxy
+        public struct UserProxy
         {
             public string Url;
             public string Port;
             public string Login;
             public string Password;
+            public bool useAuth;
         }
-        public win_main()
+        public WinMain()
         {
             InitializeComponent();
             _userproxy = new UserProxy();
+            IniFile = new FileIniDataParser();
+            iniData = IniFile.ReadFile("settings.ini");
+            _userproxy.Url = iniData["PROXY"]["host"];
+            _userproxy.Port = iniData["PROXY"]["port"];
+            _userproxy.Login = iniData["PROXY"]["user"];
+            _userproxy.Password = iniData["PROXY"]["pwd"];
+            _userproxy.useAuth = _userproxy.Login.Length > 0;
+            lab_bing_desc.BackColor = Color.Transparent;
+            chk_proxy.Checked = _userproxy.Url.Length > 0;
+            // Get current image from Bing
+            GetCurrentBingImage();
+        }
+
+        static Image FixedSize(Image imgPhoto, int Width, int Height)
+        {
+            int sourceWidth = imgPhoto.Width;
+            int sourceHeight = imgPhoto.Height;
+            int sourceX = 0;
+            int sourceY = 0;
+            int destX = 0;
+            int destY = 0;
+
+            float nPercent = 0;
+            float nPercentW = 0;
+            float nPercentH = 0;
+
+            nPercentW = ((float)Width / (float)sourceWidth);
+            nPercentH = ((float)Height / (float)sourceHeight);
+            if (nPercentH < nPercentW)
+            {
+                nPercent = nPercentH;
+                destX = System.Convert.ToInt16((Width - (sourceWidth * nPercent)) / 2);
+            }
+            else
+            {
+                nPercent = nPercentW;
+                destY = System.Convert.ToInt16((Height - (sourceHeight * nPercent)) / 2);
+            }
+
+            int destWidth = (int)(sourceWidth * nPercent);
+            int destHeight = (int)(sourceHeight * nPercent);
+
+            Bitmap bmPhoto = new Bitmap(Width, Height,
+                PixelFormat.Format24bppRgb);
+            bmPhoto.SetResolution(imgPhoto.HorizontalResolution,
+                imgPhoto.VerticalResolution);
+
+            Graphics grPhoto = Graphics.FromImage(bmPhoto);
+            grPhoto.Clear(Color.Black);
+            grPhoto.InterpolationMode =
+                InterpolationMode.HighQualityBicubic;
+
+            grPhoto.DrawImage(imgPhoto,
+                new Rectangle(destX, destY, destWidth, destHeight),
+                new Rectangle(sourceX, sourceY, sourceWidth, sourceHeight),
+                GraphicsUnit.Pixel);
+
+            grPhoto.Dispose();
+            return bmPhoto;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (GetCurrentBingImage())
+            {
+                
+            }
+            else
+            {
+                
+            }
+        }
+
+        private bool GetCurrentBingImage()
+        {
             var bii = GetPicture(DateTime.Now);
             const string bingRoot = "https://www.bing.com";
-            if(bii.Url == "")
+            if (bii.Url == "")
             {
                 Console.WriteLine("Erreur !");
+                return false;
             }
             else
             {
@@ -62,18 +139,24 @@ namespace ImageDuJour2
                 {
                     try
                     {
-                        pict_bing_today.Image = Bitmap.FromStream(stream);
+                        if (stream != null)
+                        {
+                            Image img = Image.FromStream(stream);
+                            pict_bing_today.Image = FixedSize(img, pict_bing_today.Width, pict_bing_today.Height);
+                        }
                     }
                     catch (Exception exception)
                     {
                         Console.WriteLine(exception);
                         throw;
-                    }                
+                    }
                 }
+
                 lab_bing_desc.Text = bii.Desc;
+                return true;
             }
         }
-
+        
         private static string GetCurrentLocal()
         {
             var ci = System.Globalization.CultureInfo.CurrentCulture;
@@ -82,6 +165,7 @@ namespace ImageDuJour2
 
         private static BingImageInfos GetPicture(DateTime dateTime)
         {
+            Cursor.Current = Cursors.WaitCursor;
             const string bingRootUrl = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=";
             var bingLocalUrl = GetCurrentLocal();
             var bingUrl = bingRootUrl + bingLocalUrl;
@@ -126,7 +210,11 @@ namespace ImageDuJour2
             dynamic json = Newtonsoft.Json.Linq.JObject.Parse(dataString);
             
             bii.Url = json.images[0].url;
-            bii.Desc = json.images[0].copyright;
+
+            byte[] bytes = Encoding.Default.GetBytes(json.images[0].copyright.ToString());
+            //Console.WriteLine(bytes.ToString());
+            bii.Desc = Encoding.UTF8.GetString(bytes);
+            Cursor.Current = Cursors.Default;
             return bii;
         }
 
@@ -143,8 +231,13 @@ namespace ImageDuJour2
         private void bt_proxy_setup_Click(object sender, EventArgs e)
         {
             // Ouvre la fenêtre de configuration du proxy
-            Form prox_conf = new win_config();
-            prox_conf.Show();
+            Form proxConf = new WinConfig();
+            if (proxConf.ShowDialog() == DialogResult.OK)
+            {
+                Console.WriteLine(iniData);
+                IniFile.WriteFile("settings.ini", iniData);
+            }
+            
         }
     }
 }

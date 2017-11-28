@@ -19,11 +19,11 @@ namespace ImageDuJour2
         /// </summary>
         /// http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=fr-FR
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new win_main());
+            Application.Run(new WinMain());
         }
 
     }
