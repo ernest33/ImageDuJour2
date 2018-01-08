@@ -35,7 +35,7 @@
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.chk_proxy = new System.Windows.Forms.CheckBox();
             this.bt_quit = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.bt_setbingwall = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.pict_bing_today = new System.Windows.Forms.PictureBox();
             this.lab_bing_desc = new System.Windows.Forms.Label();
@@ -48,7 +48,7 @@
             this.panel1.Controls.Add(this.bt_proxy_setup);
             this.panel1.Controls.Add(this.chk_proxy);
             this.panel1.Controls.Add(this.bt_quit);
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.bt_setbingwall);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 464);
             this.panel1.Name = "panel1";
@@ -91,19 +91,19 @@
             this.bt_quit.Name = "bt_quit";
             this.bt_quit.Size = new System.Drawing.Size(132, 26);
             this.bt_quit.TabIndex = 1;
-            this.bt_quit.Text = "Annuler";
+            this.bt_quit.Text = "Quitter";
             this.bt_quit.UseVisualStyleBackColor = true;
             this.bt_quit.Click += new System.EventHandler(this.bt_quit_Click);
             // 
-            // button1
+            // bt_setbingwall
             // 
-            this.button1.Location = new System.Drawing.Point(528, 10);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(156, 26);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Utiliser comme papier-peint";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.bt_setbingwall.Location = new System.Drawing.Point(528, 10);
+            this.bt_setbingwall.Name = "bt_setbingwall";
+            this.bt_setbingwall.Size = new System.Drawing.Size(156, 26);
+            this.bt_setbingwall.TabIndex = 0;
+            this.bt_setbingwall.Text = "Utiliser comme papier-peint";
+            this.bt_setbingwall.UseVisualStyleBackColor = true;
+            this.bt_setbingwall.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel2
             // 
@@ -147,11 +147,9 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "WinMain";
-            this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "L\'image du jour";
             this.panel1.ResumeLayout(false);
@@ -164,7 +162,7 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button bt_quit;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button bt_setbingwall;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.CheckBox chk_proxy;
         private System.Windows.Forms.Button bt_proxy_setup;

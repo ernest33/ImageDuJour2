@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,10 +18,8 @@ using Newtonsoft.Json;
 using IniParser;
 using IniParser.Model;
 
-
 namespace ImageDuJour2
 {
-    
     public partial class WinMain : Form
     {
         private static bool _useProxy;
@@ -105,16 +104,19 @@ namespace ImageDuJour2
             grPhoto.Dispose();
             return bmPhoto;
         }
-
+        [DllImport("User32", CharSet = CharSet.Auto)]
+        public static extern int SystemParametersInfo(int uiAction, int uiParam, string pvParam, uint fWinIni);
+        
         private void button1_Click(object sender, EventArgs e)
         {
+            
             if (GetCurrentBingImage())
             {
-                
+                SystemParametersInfo(0x0014, 0, "c:\\temp\\bingimage.png", 0x0001);
             }
             else
             {
-                
+
             }
         }
 
@@ -142,6 +144,7 @@ namespace ImageDuJour2
                         if (stream != null)
                         {
                             Image img = Image.FromStream(stream);
+                            img.Save("c:\\temp\\bingimage.png");
                             pict_bing_today.Image = FixedSize(img, pict_bing_today.Width, pict_bing_today.Height);
                         }
                     }
@@ -151,12 +154,11 @@ namespace ImageDuJour2
                         throw;
                     }
                 }
-
                 lab_bing_desc.Text = bii.Desc;
                 return true;
             }
         }
-        
+
         private static string GetCurrentLocal()
         {
             var ci = System.Globalization.CultureInfo.CurrentCulture;
@@ -208,7 +210,7 @@ namespace ImageDuJour2
             Console.WriteLine(dataString);
 
             dynamic json = Newtonsoft.Json.Linq.JObject.Parse(dataString);
-            
+
             bii.Url = json.images[0].url;
 
             byte[] bytes = Encoding.Default.GetBytes(json.images[0].copyright.ToString());
@@ -237,7 +239,7 @@ namespace ImageDuJour2
                 Console.WriteLine(iniData);
                 IniFile.WriteFile("settings.ini", iniData);
             }
-            
+
         }
     }
 }
