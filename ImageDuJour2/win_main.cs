@@ -17,6 +17,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using IniParser;
 using IniParser.Model;
+using static System.Console;
 
 namespace ImageDuJour2
 {
@@ -55,6 +56,7 @@ namespace ImageDuJour2
             chk_proxy.Checked = _userproxy.Url.Length > 0;
             // Get current image from Bing
             GetCurrentBingImage();
+            bt_refresh.Enabled = false;
         }
 
         static Image FixedSize(Image imgPhoto, int Width, int Height)
@@ -126,7 +128,7 @@ namespace ImageDuJour2
             const string bingRoot = "https://www.bing.com";
             if (bii.Url == "")
             {
-                Console.WriteLine("Erreur !");
+                WriteLine("Erreur !");
                 return false;
             }
             else
@@ -150,7 +152,7 @@ namespace ImageDuJour2
                     }
                     catch (Exception exception)
                     {
-                        Console.WriteLine(exception);
+                        WriteLine(exception);
                         throw;
                     }
                 }
@@ -176,7 +178,7 @@ namespace ImageDuJour2
             var bii = new BingImageInfos();
             if (_useProxy == true)
             {
-                Console.WriteLine("Using proxy");
+                WriteLine("Using proxy");
                 var p = new WebProxy(_userproxy.Url + ":" + _userproxy.Port, true)
                 {
                     Credentials = new NetworkCredential(_userproxy.Login, _userproxy.Password)
@@ -189,7 +191,7 @@ namespace ImageDuJour2
             }
             else
             {
-                Console.WriteLine("Without proxy");
+                WriteLine("Without proxy");
                 client = new WebClient
                 {
                     Proxy = null
@@ -202,12 +204,12 @@ namespace ImageDuJour2
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                WriteLine(e.Message);
                 bii.Url = "";
                 return bii;
             }
 
-            Console.WriteLine(dataString);
+            WriteLine(dataString);
 
             dynamic json = Newtonsoft.Json.Linq.JObject.Parse(dataString);
 
@@ -223,6 +225,7 @@ namespace ImageDuJour2
         private void chk_proxy_CheckedChanged(object sender, EventArgs e)
         {
             _useProxy = this.chk_proxy.Checked;
+            bt_refresh.Enabled = true;
         }
 
         private void bt_quit_Click(object sender, EventArgs e)
@@ -236,10 +239,17 @@ namespace ImageDuJour2
             Form proxConf = new WinConfig();
             if (proxConf.ShowDialog() == DialogResult.OK)
             {
-                Console.WriteLine(iniData);
+                WriteLine(iniData);
                 IniFile.WriteFile("settings.ini", iniData);
             }
 
+        }
+
+        private void bt_refresh_Click(object sender, EventArgs e)
+        {
+            // Get current image from Bing
+            GetCurrentBingImage();
+            bt_refresh.Enabled = false;
         }
     }
 }

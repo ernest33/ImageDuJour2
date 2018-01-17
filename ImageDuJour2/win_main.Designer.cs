@@ -39,12 +39,14 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.pict_bing_today = new System.Windows.Forms.PictureBox();
             this.lab_bing_desc = new System.Windows.Forms.Label();
+            this.bt_refresh = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pict_bing_today)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.bt_refresh);
             this.panel1.Controls.Add(this.bt_proxy_setup);
             this.panel1.Controls.Add(this.chk_proxy);
             this.panel1.Controls.Add(this.bt_quit);
@@ -136,6 +138,17 @@
             this.lab_bing_desc.TabIndex = 3;
             this.lab_bing_desc.Text = "label1";
             // 
+            // bt_refresh
+            // 
+            this.bt_refresh.Enabled = false;
+            this.bt_refresh.Location = new System.Drawing.Point(415, 12);
+            this.bt_refresh.Name = "bt_refresh";
+            this.bt_refresh.Size = new System.Drawing.Size(67, 20);
+            this.bt_refresh.TabIndex = 4;
+            this.bt_refresh.Text = "Rafraîchir";
+            this.bt_refresh.UseVisualStyleBackColor = true;
+            this.bt_refresh.Click += new System.EventHandler(this.bt_refresh_Click);
+            // 
             // WinMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -169,6 +182,7 @@
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.PictureBox pict_bing_today;
         private System.Windows.Forms.Label lab_bing_desc;
+        private System.Windows.Forms.Button bt_refresh;
     }
 }
 
