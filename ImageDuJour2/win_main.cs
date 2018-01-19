@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using IniParser;
 using IniParser.Model;
 using static System.Console;
+//using Windows.System.UserProfile;
 
 namespace ImageDuJour2
 {
@@ -31,6 +32,7 @@ namespace ImageDuJour2
         {
             public string Url;      // url
             public string Desc;     // copyright
+            public string hsh;      // ?
         };
 
         public struct UserProxy
@@ -114,7 +116,10 @@ namespace ImageDuJour2
             
             if (GetCurrentBingImage())
             {
+                // Desktop wallpaper
                 SystemParametersInfo(0x0014, 0, "c:\\temp\\bingimage.png", 0x0001);
+                // Lockscreen wallpaper
+                //System.UserProfile.LockScreen.SetImageFileAsync(file);
             }
             else
             {
@@ -134,7 +139,7 @@ namespace ImageDuJour2
             else
             {
                 // On charge l'image dans le controle image
-                var fullUrl = bingRoot + bii.Url;
+                var fullUrl = bingRoot + "/hpwp/" + bii.hsh + "?cc=fr";
 
                 var request = WebRequest.Create(fullUrl);
 
@@ -146,7 +151,7 @@ namespace ImageDuJour2
                         if (stream != null)
                         {
                             Image img = Image.FromStream(stream);
-                            img.Save("c:\\temp\\bingimage.png");
+                            img.Save("c:\\temp\\bingimage.jpg", ImageFormat.Jpeg);
                             pict_bing_today.Image = FixedSize(img, pict_bing_today.Width, pict_bing_today.Height);
                         }
                     }
@@ -170,9 +175,11 @@ namespace ImageDuJour2
         private static BingImageInfos GetPicture(DateTime dateTime)
         {
             Cursor.Current = Cursors.WaitCursor;
-            const string bingRootUrl = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=";
+            //const string bingRootUrl = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt={0}";
+            const string bingRootUrl = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt={0}";
             var bingLocalUrl = GetCurrentLocal();
             var bingUrl = bingRootUrl + bingLocalUrl;
+            var url = string.Format(bingUrl, bingLocalUrl );
             var dataString = "";
             WebClient client = null;
             var bii = new BingImageInfos();
@@ -214,6 +221,7 @@ namespace ImageDuJour2
             dynamic json = Newtonsoft.Json.Linq.JObject.Parse(dataString);
 
             bii.Url = json.images[0].url;
+            bii.hsh = json.images[0].hsh;
 
             byte[] bytes = Encoding.Default.GetBytes(json.images[0].copyright.ToString());
             //Console.WriteLine(bytes.ToString());
