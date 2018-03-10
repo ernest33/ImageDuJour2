@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinMain));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.bt_refresh = new System.Windows.Forms.Button();
             this.bt_proxy_setup = new System.Windows.Forms.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.chk_proxy = new System.Windows.Forms.CheckBox();
@@ -39,7 +40,6 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.pict_bing_today = new System.Windows.Forms.PictureBox();
             this.lab_bing_desc = new System.Windows.Forms.Label();
-            this.bt_refresh = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pict_bing_today)).BeginInit();
             this.SuspendLayout();
@@ -57,6 +57,17 @@
             this.panel1.Padding = new System.Windows.Forms.Padding(7);
             this.panel1.Size = new System.Drawing.Size(718, 46);
             this.panel1.TabIndex = 0;
+            // 
+            // bt_refresh
+            // 
+            this.bt_refresh.Enabled = false;
+            this.bt_refresh.Location = new System.Drawing.Point(415, 12);
+            this.bt_refresh.Name = "bt_refresh";
+            this.bt_refresh.Size = new System.Drawing.Size(67, 20);
+            this.bt_refresh.TabIndex = 4;
+            this.bt_refresh.Text = "Rafraîchir";
+            this.bt_refresh.UseVisualStyleBackColor = true;
+            this.bt_refresh.Click += new System.EventHandler(this.bt_refresh_Click);
             // 
             // bt_proxy_setup
             // 
@@ -117,12 +128,15 @@
             // 
             // pict_bing_today
             // 
-            this.pict_bing_today.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            this.pict_bing_today.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pict_bing_today.BackColor = System.Drawing.Color.Black;
             this.pict_bing_today.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pict_bing_today.Dock = System.Windows.Forms.DockStyle.Top;
             this.pict_bing_today.Location = new System.Drawing.Point(0, 0);
             this.pict_bing_today.Name = "pict_bing_today";
             this.pict_bing_today.Size = new System.Drawing.Size(718, 411);
+            this.pict_bing_today.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pict_bing_today.TabIndex = 2;
             this.pict_bing_today.TabStop = false;
             // 
@@ -138,17 +152,6 @@
             this.lab_bing_desc.TabIndex = 3;
             this.lab_bing_desc.Text = "label1";
             // 
-            // bt_refresh
-            // 
-            this.bt_refresh.Enabled = false;
-            this.bt_refresh.Location = new System.Drawing.Point(415, 12);
-            this.bt_refresh.Name = "bt_refresh";
-            this.bt_refresh.Size = new System.Drawing.Size(67, 20);
-            this.bt_refresh.TabIndex = 4;
-            this.bt_refresh.Text = "Rafraîchir";
-            this.bt_refresh.UseVisualStyleBackColor = true;
-            this.bt_refresh.Click += new System.EventHandler(this.bt_refresh_Click);
-            // 
             // WinMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -161,7 +164,6 @@
             this.Controls.Add(this.panel1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
             this.Name = "WinMain";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "L\'image du jour";
